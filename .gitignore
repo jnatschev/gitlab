@@ -219,3 +219,6 @@ __marimo__/
 
 # ansible sfuff
 .ansible/
+
+# git
+.gitattributes
