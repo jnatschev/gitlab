@@ -1,0 +1,7 @@
+---
+- name: Test collection role `imig.gitlab.gitlab_systemd_stop
+  gather_facts: false
+  hosts: fcos01.localdomain
+
+  roles:
+    - imig.gitlab.gitlab_systemd_stop

@@ -1,0 +1,3 @@
+---
+# defaults file for imig.gitlab.gitlab_change_image_in_systemd_user_unit_file
+gitlab_change_image_in_systemd_user_unit_file_template_destination: ~/.config/containers/systemd/gitlab.container

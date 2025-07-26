@@ -1,0 +1,11 @@
+---
+- name: Slack notification upon successful gitlab container restart
+  community.general.slack:
+    msg: "Container `gitlab` restart status: SUCCESS"
+    prepend_hash: "never"
+    token: T090KSERMBL/B090GKMRYBX/yroNSElyN6wtPV2gE4QShupv
+
+- name: Remove previous gitlab-ee image
+  containers.podman.podman_image:
+    name: "{{ ansible_facts.gitlab_podman_container_info.imageid }}"
+    state: absent

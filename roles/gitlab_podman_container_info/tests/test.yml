@@ -1,0 +1,12 @@
+---
+- name: Test `gitlab_podman_container_info role`
+  gather_facts: false
+  hosts: fcos01.localdomain
+
+  roles:
+    - imig.gitlab.gitlab_podman_container_info
+
+  tasks:
+    - name: Print imig.gitlab.gitlab_podman_container_info
+      ansible.builtin.debug:
+        var: ansible_facts.gitlab_podman_container_info

@@ -1,0 +1,13 @@
+---
+# tasks file for imig.gitlab.gitlab_change_image_in_systemd_user_unit_file
+
+- name: Update the systemd user unit file, `gitlab.container`, with new gitlab-ee image
+  ansible.builtin.template:
+    dest: "{{ gitlab_change_image_in_systemd_user_unit_file_template_destination }}"
+    group: core
+    mode: "0644"
+    owner: core
+    src: "gitlab.container.j2"
+  vars:
+    gitlabee_image: "{{ [ansible_facts.gitlabee_newest_image.name, ansible_facts.gitlabee_newest_image.tag] | join(':') }}"
+  notify: "gitlab post change image in systemd user unit file"
