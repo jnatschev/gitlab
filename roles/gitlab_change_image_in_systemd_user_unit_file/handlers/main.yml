@@ -1,0 +1,38 @@
+---
+# handlers file for imig.gitlab.gitlab_change_image_in_systemd_user_unit_file
+- name: Restart gitlab container
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+    name: gitlab.service
+    scope: user
+    state: restarted
+  listen: "gitlab post change image in systemd user unit file"
+
+- name: Check gitlab `liveness` post handler task `Restart gitlab container`
+  connection: local
+  delegate_to: localhost
+  ansible.builtin.uri:
+    url: http://gitlab.localdomain:8000/-/liveness
+  register: gitlab_liveness_result
+  until:
+    - gitlab_liveness_result.json.status is defined
+    - gitlab_liveness_result.json.status == "ok"
+  retries: 40
+  delay: 15
+  ignore_errors: true
+  listen: "gitlab post change image in systemd user unit file"
+
+- name: Include tasks post successful restart of `gitlab` version change
+  ansible.builtin.include_tasks: gitlab_post_version_change_successful_restart.yml
+  when:
+    - gitlab_liveness_result.json.status is defined
+    - gitlab_liveness_result.json.status == "ok"
+  listen: "gitlab post change image in systemd user unit file"
+
+- name: Slack notification upon failed gitlab container restart
+  community.general.slack:
+    msg: "Container `gitlab` restart status: FAIL"
+    prepend_hash: "never"
+    token: T090KSERMBL/B090GKMRYBX/yroNSElyN6wtPV2gE4QShupv
+  when: gitlab_liveness_result.json.status is not defined or (gitlab_liveness_result.json.status is defined and gitlab_liveness_result.json.status != "ok")
+  listen: "gitlab post change image in systemd user unit file"

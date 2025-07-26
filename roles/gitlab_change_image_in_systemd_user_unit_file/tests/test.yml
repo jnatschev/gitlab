@@ -1,0 +1,22 @@
+---
+- name: Test playbook of `imig.gitlab.gitlab_change_image_in_systemd_user_unit_file` role
+  gather_facts: false
+  hosts: fcos01.localdomain
+
+  tasks:
+    - name: Set fact `gitlabee_newest_image`
+      ansible.builtin.set_fact:
+        gitlabee_newest_image: {}
+        cacheable: true
+
+    - name: Update fact `gitlabee_newest_image` with `name` value and `tag` value
+      ansible.utils.update_fact:
+        updates:
+          - path: ansible_facts.gitlabee_newest_image.name
+            value: docker.io/gitlab/gitlab-ee
+          - path: ansible_facts.gitlabee_newest_image.tag
+            value: 18.2.1-ee.0
+
+    - name: Include role `imig.gitlab.gitlab_change_image_in_systemd_user_unit_file`
+      ansible.builtin.include_role:
+        name: imig.gitlab.gitlab_change_image_in_systemd_user_unit_file

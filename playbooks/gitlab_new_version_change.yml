@@ -1,0 +1,19 @@
+---
+- name: Perform a gitlab new version change
+  gather_facts: false
+  hosts: fcos01.localdomain
+
+  roles:
+    - imig.gitlab.gitlabee_newer_image_exists
+
+  tasks:
+    - name: Loop over the roles that perform a gitlab new version change
+      ansible.builtin.include_role:
+        name: "{{ role_name }}"
+      loop:
+        - imig.gitlab.gitlabee_pull_newest_image
+        - imig.gitlab.gitlab_systemd_stop
+        - imig.gitlab.gitlab_change_image_in_systemd_user_unit_file
+      loop_control:
+        loop_var: role_name
+      when: ansible_facts.gitlabee_newer_image_exists is true

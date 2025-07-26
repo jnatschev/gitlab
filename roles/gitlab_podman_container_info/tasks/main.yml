@@ -1,0 +1,45 @@
+---
+# tasks file for imig.gitlab.gitlab_podman_container_info
+- name: Set fact `gitlab_podman_container_info` as empty dictionary
+  ansible.builtin.set_fact:
+    gitlab_podman_container_info: {}
+    cacheable: true
+
+- name: Get gitlab podman container info
+  containers.podman.podman_container_info:
+    name: gitlab
+  register: podman_container_inspect_gitlab
+
+- name: Update fact `gitlab_podman_container_info` with gitlab podman container info
+  ansible.utils.update_fact:
+    updates:
+      - path: ansible_facts.gitlab_podman_container_info.imageid
+        value: "{{
+                 podman_container_inspect_gitlab |
+                 json_query('containers[*].Image') |
+                 first
+               }}"
+      - path: ansible_facts.gitlab_podman_container_info.imagename
+        value: "{{
+                 podman_container_inspect_gitlab |
+                 community.general.json_query('containers[].ImageName') |
+                 first
+               }}"
+      - path: ansible_facts.gitlab_podman_container_info.tag
+        value: "{{
+                 podman_container_inspect_gitlab |
+                 community.general.json_query('containers[*].ImageName') |
+                 first |
+                 split(':') |
+                 last
+               }}"
+      - path: ansible_facts.gitlab_podman_container_info.version
+        value: "{{
+                 podman_container_inspect_gitlab |
+                 community.general.json_query('containers[*].ImageName') |
+                 first |
+                 split(':') |
+                 last |
+                 split('-') |
+                 first
+               }}"

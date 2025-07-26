@@ -1,0 +1,22 @@
+[Unit]
+Description=GITLAB container service
+
+[Container]
+ContainerName=gitlab
+Environment="GITLAB_OMNIBUS_CONFIG=external_url 'http://gitlab.localdomain:8000'\ngitlab_rails['gitlab_shell_ssh_port'] = 2000\ngitlab_rails['monitoring_whitelist'] = ['127.0.0.0/8', '192.168.132.0/24', '192.168.133.0/24']\n"
+HostName=gitlab.localdomain
+Image={{ gitlabee_image }}
+PublishPort=8000:8000
+PublishPort=9000:9000
+PublishPort=2000:2000
+ShmSize=256mb
+Volume=gitlab_config:/etc/gitlab:Z
+Volume=gitlab_data:/var/opt/gitlab:Z
+Volume=gitlab_logs:/var/log/gitlab:Z
+
+[Service]
+Restart=always
+TimeoutStartSec=600
+
+[Install]
+WantedBy=multi-user.target default.target

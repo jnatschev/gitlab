@@ -1,0 +1,7 @@
+---
+# tasks file for imig.gitlab.gitlab_systemd_stop
+- name: Perform `systemctl --user stop gitlab.service`
+  ansible.builtin.systemd_service:
+    name: gitlab.service
+    scope: user
+    state: stopped
